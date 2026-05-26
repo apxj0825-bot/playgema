@@ -1,90 +1,36 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لعبة الطيارات الاحترافية</title>
+    <title>السيد محمد رضا الشيرازي</title>
     <style>
-        body { margin: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #fff; font-family: sans-serif; overflow: hidden; }
-        canvas { border: 3px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-        .ui { margin-bottom: 10px; font-size: 20px; }
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; padding: 20px; line-height: 1.6; }
+        .card { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        .profile-img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 5px solid #2c3e50; margin-bottom: 20px; }
+        h1 { color: #2c3e50; }
+        .bio { font-size: 1.1em; color: #555; margin-bottom: 20px; }
+        .books { text-align: right; background: #f9f9f9; padding: 15px; border-radius: 10px; }
+        .books h2 { color: #e67e22; }
     </style>
 </head>
 <body>
 
-<div class="ui">المستوى: <span id="lvl">1</span> | النتيجة: <span id="score">0</span></div>
-<canvas id="gameCanvas" width="400" height="600"></canvas>
+<div class="card">
+    <img src="https://www.alshirazi.net/images/shirazi_reza.jpg" alt="السيد محمد رضا الشيرازي" class="profile-img">
+    
+    <h1>السيد محمد رضا الشيرازي</h1>
+    <p class="bio">عالم دين ومفكر إسلامي، اشتهر بأسلوبه التربوي والأخلاقي المتميز وبطرحه الفكري العميق.</p>
 
-<script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    <div class="books">
+        <h2>أبرز مؤلفاته:</h2>
+        <ul>
+            <li>سلسلة تدبرات في القرآن الكريم</li>
+            <li>دروس في الأخلاق والتربية</li>
+            <li>محاضرات في العقائد والفكر</li>
+            <li>سلسلة في التفسير الموضوعي</li>
+        </ul>
+    </div>
+</div>
 
-    let player = { x: 180, y: 520, w: 40, h: 40 };
-    let enemies = [];
-    let particles = [];
-    let score = 0;
-    let level = 1;
-    let gameSpeed = 4;
-
-    window.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowLeft" && player.x > 0) player.x -= 30;
-        if (e.key === "ArrowRight" && player.x < 360) player.x += 30;
-    });
-
-    function update() {
-        // نظام المستويات
-        if (score > level * 10) {
-            level++;
-            gameSpeed += 0.5;
-            document.getElementById("lvl").innerText = level;
-        }
-
-        // إنشاء الأعداء
-        if (Math.random() < 0.04) {
-            enemies.push({ x: Math.random() * 360, y: -50, w: 40, h: 40 });
-        }
-
-        // تحديث الدخان (Particles)
-        particles.push({ x: player.x + 20, y: player.y + 40, alpha: 1 });
-        particles.forEach((p, i) => {
-            p.y += 2; p.alpha -= 0.05;
-            if (p.alpha <= 0) particles.splice(i, 1);
-        });
-
-        // تحديث الأعداء
-        enemies.forEach((en, i) => {
-            en.y += gameSpeed;
-            if (en.y > 600) { enemies.splice(i, 1); score++; document.getElementById("score").innerText = score; }
-            if (Math.abs(en.x - player.x) < 30 && Math.abs(en.y - player.y) < 30) {
-                alert("Game Over! النتيجة النهائية: " + score);
-                location.reload();
-            }
-        });
-
-        draw();
-        requestAnimationFrame(update);
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, 400, 600);
-        
-        // رسم الدخان
-        particles.forEach(p => {
-            ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha})`;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-            ctx.fill();
-        });
-
-        // رسم الطائرة (اللاعب)
-        ctx.fillStyle = "#00d2ff";
-        ctx.fillRect(player.x, player.y, player.w, player.h);
-
-        // رسم الأعداء
-        ctx.fillStyle = "#ff4d4d";
-        enemies.forEach(en => ctx.fillRect(en.x, en.y, en.w, en.h));
-    }
-
-    update();
-</script>
 </body>
 </html>
