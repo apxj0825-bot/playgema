@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>لعبة الطيارات الاحترافية</title>
+    <style>
+        body { margin: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; color: #fff; font-family: sans-serif; overflow: hidden; }
+        canvas { border: 3px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .ui { margin-bottom: 10px; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="ui">المستوى: <span id="lvl">1</span> | النتيجة: <span id="score">0</span></div>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let player = { x: 180, y: 520, w: 40, h: 40 };
+    let enemies = [];
+    let particles = [];
+    let score = 0;
+    let level = 1;
+    let gameSpeed = 4;
+
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft" && player.x > 0) player.x -= 30;
+        if (e.key === "ArrowRight" && player.x < 360) player.x += 30;
+    });
+
+    function update() {
+        // نظام المستويات
+        if (score > level * 10) {
+            level++;
+            gameSpeed += 0.5;
+            document.getElementById("lvl").innerText = level;
+        }
+
+        // إنشاء الأعداء
+        if (Math.random() < 0.04) {
+            enemies.push({ x: Math.random() * 360, y: -50, w: 40, h: 40 });
+        }
+
+        // تحديث الدخان (Particles)
+        particles.push({ x: player.x + 20, y: player.y + 40, alpha: 1 });
+        particles.forEach((p, i) => {
+            p.y += 2; p.alpha -= 0.05;
+            if (p.alpha <= 0) particles.splice(i, 1);
+        });
+
+        // تحديث الأعداء
+        enemies.forEach((en, i) => {
+            en.y += gameSpeed;
+            if (en.y > 600) { enemies.splice(i, 1); score++; document.getElementById("score").innerText = score; }
+            if (Math.abs(en.x - player.x) < 30 && Math.abs(en.y - player.y) < 30) {
+                alert("Game Over! النتيجة النهائية: " + score);
+                location.reload();
+            }
+        });
+
+        draw();
+        requestAnimationFrame(update);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, 400, 600);
+        
+        // رسم الدخان
+        particles.forEach(p => {
+            ctx.fillStyle = `rgba(200, 200, 200, ${p.alpha})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // رسم الطائرة (اللاعب)
+        ctx.fillStyle = "#00d2ff";
+        ctx.fillRect(player.x, player.y, player.w, player.h);
+
+        // رسم الأعداء
+        ctx.fillStyle = "#ff4d4d";
+        enemies.forEach(en => ctx.fillRect(en.x, en.y, en.w, en.h));
+    }
+
+    update();
+</script>
+</body>
+</html>
